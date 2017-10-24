@@ -1,0 +1,14 @@
+default_threads:
+    live: 16
+    stag: 10
+    other: 1
+
+default_user_agent: ChangeMeUserAgent
+
+mobile_headers:
+    X-Is-Mobile: sure
+
+ca_path: /etc/ssl/certs/
+
+# Default request timeout in seconds
+timeout: 10.0

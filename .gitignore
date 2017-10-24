@@ -1,0 +1,10 @@
+*~
+*.pyc
+sphinx_venv/
+venv/
+virtual_env/
+*.egg
+*.egg-info
+build/
+dist/
+.eggs/
