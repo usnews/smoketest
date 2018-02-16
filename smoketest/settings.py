@@ -59,3 +59,7 @@ def get_ca_path():
 def get_default_request_timeout():
     # Use 30.0 seconds as a fallback
     return _get_settings().get('timeout', 30.0)
+
+
+def get_level_token():
+    return _get_settings().get('level_token', '{LEVEL}')

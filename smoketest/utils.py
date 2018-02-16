@@ -7,7 +7,10 @@ from urlparse import (
 )
 from urllib import urlencode
 
-from smoketest.settings import get_special_cases_url_transforms
+from smoketest.settings import (
+    get_special_cases_url_transforms,
+    get_level_token,
+)
 
 CACHEBUST_KEY = '_'
 
@@ -41,17 +44,36 @@ def level_transform(parts, level):
     """Transform the first subdomain according to our habits.
     www.usnews.com => www-level.usnews.com
     """
-    if level == 'live':
-        return parts
+    LEVEL_VAR = get_level_token()
 
-    try:
-        subdomain, subdomain2, remaining = parts[1].split('.', 2)
-    except ValueError:
-        # no subdomain to modify
+    if LEVEL_VAR and LEVEL_VAR in parts[1] + parts[2]:
+        host, path = parts[1], parts[2]
+        if level == 'live':
+            level = ''
+
+        if host:
+            host = host.replace(LEVEL_VAR, level)
+            host = host.replace('..', '.').replace('-.', '.')
+            if host[0] in ('-', '.'):
+                host = host[1:]
+        if path:
+            if level == '' and LEVEL_VAR+'/' in path:
+                path = path.replace(LEVEL_VAR+'/', level)
+            else:
+                path = path.replace(LEVEL_VAR, level)
+        parts[1] = host
+        parts[2] = path
+    elif level == 'live':
         return parts
-    parts[1] = '.'.join(['{0}-{1}'.format(subdomain, level),
-                         subdomain2,
-                         remaining])
+    else:
+        try:
+            subdomain, subdomain2, remaining = parts[1].split('.', 2)
+        except ValueError:
+            # no subdomain to modify
+            return parts
+        parts[1] = '.'.join(['{0}-{1}'.format(subdomain, level),
+                            subdomain2,
+                            remaining])
     return parts
 
 

@@ -16,6 +16,26 @@ run smoketest with a ``--level=dev`` argument, it will append "-dev" to the
 first part of the domain name of every URL it tests: "www.usnews.com" becomes
 "www-dev.usnews.com".
 
+You can override that method of specifying levels by including the
+``level_token`` token in URLs. The token defaults to the string:
+
+.. code-block:: yaml
+
+    level_token: '{LEVEL}'
+
+For example:
+
+.. code-block:: yaml
+
+    - https://{LEVEL}.usnews.com/opinion
+    - https://www-{LEVEL}.usnews.com/opinion
+
+For the first ``live`` will test https://usnews.com/opinion while for a level
+such as ``stag``, it will test https://stag.usnews.com/opinion. The second will
+be https://www.usnews.com/opinion and https://www-stag.usnews.com/opinion,
+respectively. It tries to intelligently remove extra ".", "-", and "/" as
+needed if the level would be omitted in the case of ``live``.
+
 Note that the default level is ``live``, so running smoketest without a level
 argument is equivalent to running it with ``--level=live``.
 
