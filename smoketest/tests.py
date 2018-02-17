@@ -52,7 +52,7 @@ def get_tree(response):
     except KeyError:
         try:
             tree = lxml.html.fromstring(response.text)
-        except lxml.etree.XMLSyntaxError:
+        except (lxml.etree.XMLSyntaxError, lxml.etree.ParserError):
             tree = None
         _TREE_CACHE[response] = tree
         return tree
