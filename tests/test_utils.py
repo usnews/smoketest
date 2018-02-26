@@ -75,7 +75,7 @@ class TestTransformUrlBasedOnOptions(unittest.TestCase):
         transformed = transform_url_based_on_options(url, options)
         self.assertEqual(transformed, 'http://www-stag.usnews.com')
 
-    def test_custom_evel(self):
+    def test_custom_level(self):
         from smoketest.utils import transform_url_based_on_options
         from collections import namedtuple
         Options = namedtuple('Options', ('scheme', 'level', 'port', 'cachebust'))
