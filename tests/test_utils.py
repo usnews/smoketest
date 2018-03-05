@@ -75,6 +75,50 @@ class TestTransformUrlBasedOnOptions(unittest.TestCase):
         transformed = transform_url_based_on_options(url, options)
         self.assertEqual(transformed, 'http://www-stag.usnews.com')
 
+    def test_custom_level(self):
+        from smoketest.utils import transform_url_based_on_options
+        from collections import namedtuple
+        Options = namedtuple('Options', ('scheme', 'level', 'port', 'cachebust'))
+        url = 'http://www-{LEVEL}.usnews.com'
+
+        options = Options(None, 'live', None, False)
+        transformed = transform_url_based_on_options(url, options)
+        self.assertEqual(transformed, 'http://www.usnews.com')
+
+        options = Options(None, 'stag', None, False)
+        transformed = transform_url_based_on_options(url, options)
+        self.assertEqual(transformed, 'http://www-stag.usnews.com')
+
+        url = 'http://{LEVEL}.usnews.com'
+
+        options = Options(None, 'live', None, False)
+        transformed = transform_url_based_on_options(url, options)
+        self.assertEqual(transformed, 'http://usnews.com')
+
+        options = Options(None, 'stag', None, False)
+        transformed = transform_url_based_on_options(url, options)
+        self.assertEqual(transformed, 'http://stag.usnews.com')
+
+        url = 'http://{LEVEL}-www.usnews.com'
+
+        options = Options(None, 'live', None, False)
+        transformed = transform_url_based_on_options(url, options)
+        self.assertEqual(transformed, 'http://www.usnews.com')
+
+        options = Options(None, 'stag', None, False)
+        transformed = transform_url_based_on_options(url, options)
+        self.assertEqual(transformed, 'http://stag-www.usnews.com')
+
+        url = 'http://www.usnews.com/{LEVEL}/'
+
+        options = Options(None, 'live', None, False)
+        transformed = transform_url_based_on_options(url, options)
+        self.assertEqual(transformed, 'http://www.usnews.com/')
+
+        options = Options(None, 'stag', None, False)
+        transformed = transform_url_based_on_options(url, options)
+        self.assertEqual(transformed, 'http://www.usnews.com/stag/')
+
     def test_port(self):
         from smoketest.utils import transform_url_based_on_options
         from collections import namedtuple
