@@ -77,6 +77,8 @@ class _DummyResponse(object):
     def __init__(self):
         self.elapsed = datetime.timedelta(milliseconds=1)
         self.status_code = 200
+        self.is_redirect = False
+        self.history = ()
 
 
 def get_session(elem, options):
