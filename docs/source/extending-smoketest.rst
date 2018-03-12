@@ -104,6 +104,6 @@ Unit tests
 
 Run unit tests like this::
 
-    $ python setup.py nosetests
+    $ tox
 
 Add unit tests for new code as you see fit.

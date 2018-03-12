@@ -110,7 +110,7 @@ Running tests
 
 To run the unit tests, do::
 
-    python setup.py nosetests
+    tox
 
 Building HTML documentation
 ===========================
