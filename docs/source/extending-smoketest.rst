@@ -102,7 +102,7 @@ get output like this:
 Unit tests
 ----------
 
-Run unit tests like this::
+Install `tox <http://tox.readthedocs.io/en/latest/install.html>`_, then run unit tests like this::
 
     $ tox
 
