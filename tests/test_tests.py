@@ -345,8 +345,9 @@ class TestTestResults(unittest.TestCase):
         )
         self.assertFalse(bool(json_schema_test_result))
         self.assertEqual(
-            "Response did not obey {0}: u'foo' is a required property".format(
-                self.json_schema_filename
+            "Response did not obey {0}: {1} is a required property".format(
+                self.json_schema_filename,
+                repr(u'foo'),
             ),
             json_schema_test_result.description,
         )
