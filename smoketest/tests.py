@@ -594,7 +594,7 @@ class JSONSchemaTestResult(TestResult):
         except jsonschema.exceptions.ValidationError as e:
             self._description = 'Response did not obey {0}: {1}'.format(
                 self.test.schema_filename,
-                e.message,
+                e.args[0],
             )
             return False
         except (jsonschema.exceptions.SchemaError, AttributeError) as e:
@@ -603,7 +603,7 @@ class JSONSchemaTestResult(TestResult):
             # too to catch some more schema problems.
             self._description = 'Schema file {0} had a problem: {1}'.format(
                 self.test.schema_filename,
-                e.message,
+                e.args[0],
             )
             return False
 
