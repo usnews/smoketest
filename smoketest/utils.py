@@ -1,11 +1,11 @@
 import functools
 import time
-from urlparse import (
+from six.moves.urllib.parse import (
     parse_qsl,
+    urlencode,
     urlsplit,
     urlunsplit,
 )
-from urllib import urlencode
 
 from smoketest.settings import (
     get_special_cases_url_transforms,
@@ -111,9 +111,9 @@ def uncachebust(url):
     new_parts = list(parts)
 
     parsed_qs = parse_qsl(parts.query, True)  # Keep blank values
-    parsed_qs_without_cachebuster = filter(
+    parsed_qs_without_cachebuster = list(filter(
         lambda x: x[0] != CACHEBUST_KEY,
-        parsed_qs)
+        parsed_qs))
     new_parts[3] = urlencode(parsed_qs_without_cachebuster)
     return urlunsplit(new_parts)
 

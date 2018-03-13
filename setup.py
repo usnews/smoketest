@@ -18,6 +18,7 @@ config = {
         'cssselect',
         'jsonschema',
         'lxml',
+        'six',
         'requests',
     ],
     'tests_require': [
