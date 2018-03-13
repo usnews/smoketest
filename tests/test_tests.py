@@ -752,7 +752,6 @@ class TestSelectFromJsonifiable(unittest.TestCase):
             select_from_json(json_string, selector)
         except Exception as e:
             self.assertIsInstance(e, ValueError)
-            self.assertEqual(e.args[0], 'No JSON object could be decoded')
         else:
             assert False, 'No exception was raised!'
 
