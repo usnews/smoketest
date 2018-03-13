@@ -187,7 +187,8 @@ class TestFileParser(unittest.TestCase):
         fileparser = FileParser(self.json_filename, options)
         self.assertRaises(
             Exception,
-            fileparser.generate_directives().next,
+            next,
+            fileparser.generate_directives(),
         )
 
 
