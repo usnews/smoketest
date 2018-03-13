@@ -108,9 +108,9 @@ For more examples see the complete documentation under the ``docs/`` directory.
 Running tests
 =============
 
-To run the unit tests, do::
+To run the unit tests, make sure you have `tox <http://tox.readthedocs.io/en/latest/install.html>`_ installed, then do::
 
-    python setup.py nosetests
+    tox
 
 Building HTML documentation
 ===========================

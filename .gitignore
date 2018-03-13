@@ -8,3 +8,4 @@ virtual_env/
 build/
 dist/
 .eggs/
+.tox/
