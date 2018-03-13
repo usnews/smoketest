@@ -3,7 +3,7 @@ import inspect
 import json
 import os
 import re
-from StringIO import StringIO
+from io import BytesIO
 import string
 from xml.etree.ElementTree import ParseError
 from xml.etree import ElementTree
@@ -543,7 +543,7 @@ class DTDTestResult(TestResult):
 
     def __nonzero__(self):
         xmlschema = lxml.etree.DTD(self.test.dtd_filename)
-        s = StringIO(self.response.text.encode("UTF-8"))
+        s = BytesIO(self.response.text.encode("UTF-8"))
         try:
             response_doc = lxml.etree.parse(s)
         except XMLSyntaxError as e:
