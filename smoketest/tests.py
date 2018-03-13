@@ -434,7 +434,7 @@ class JSONTestResult(TestResult):
 
     def _get_string_to_test(self):
         return select_from_json(
-            self.response.text.encode("UTF-8"),
+            self.response.text,
             self.test.selector
         )
 
@@ -584,7 +584,7 @@ class JSONSchemaTestResult(TestResult):
                 return False
 
         try:
-            json_response = json.loads(self.response.text.encode("UTF-8"))
+            json_response = json.loads(self.response.text)
         except ValueError:
             self._description = 'Response body was not valid JSON'
             return False
