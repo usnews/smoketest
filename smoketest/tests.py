@@ -329,6 +329,9 @@ class TestResult(object):
         """
         raise NotImplementedError
 
+    def __bool__(self):
+        return self.__nonzero__()
+
 
 class AlwaysPassingTestResult(TestResult):
 
