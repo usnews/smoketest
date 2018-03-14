@@ -141,14 +141,15 @@ def main():
         )
 
         # Start the tests
-        map(methodcaller('start'), threads)
+        for thread in threads:
+            thread.start()
 
         # Wait for tests to finish
         try:
             # Using threading.active_count() > 1 here causes a problem where a
             # keyboard interrupt sometimes results in the program hanging...
             # not sure why.
-            while filter(methodcaller('is_alive'), threads):
+            while [t for t in threads if t.is_alive()]:
                 pass
         except KeyboardInterrupt:
             # Write to console even if output is going to file
@@ -158,19 +159,16 @@ def main():
             ))
             sys.__stdout__.flush()
             stop_event.set()
-            while filter(methodcaller('is_alive'), threads):
-                map(methodcaller('join', 0.1), threads)
+            while [t for t in threads if t.is_alive()]:
+                for thread in threads:
+                    thread.join(0.1)
             sys.__stdout__.write('\nSmoketest cancelled by user.\n')
             sys.__stdout__.flush()
             break
 
         logger.end_pass()
-        directives = filter(
-            # If the directive never had its failed attribute set, assume it
-            # did fail.
-            lambda d: getattr(d, 'failed', True),
-            directives,
-        )
+
+        directives = [d for d in directives if getattr(d, 'failed', True)]
         if not directives:
             failed = False
             break
