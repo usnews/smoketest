@@ -245,7 +245,7 @@ class _ShellLogger(Logger):
 
         self.failure_count += 1
         # succinct
-        if self.options.quiet or self.options.verbosity <= 1:
+        if self.options.quiet or not self.options.verbosity:
             message = "\n[FAILED: {0}]\n".format(url)
 
         # verbose
