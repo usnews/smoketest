@@ -1,4 +1,5 @@
 import imp
+import io
 from operator import methodcaller
 from time import sleep
 import sys
@@ -122,7 +123,7 @@ def main():
     args = parse_args()
 
     if args.output:
-        sys.stdout = open(args.output, 'w')
+        sys.stdout = io.open(args.output, 'w')
 
     directives = []
     for filename in args.input_filenames:
