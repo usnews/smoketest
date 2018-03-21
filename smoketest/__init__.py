@@ -1,6 +1,5 @@
 import imp
 import io
-from operator import methodcaller
 from time import sleep
 import sys
 

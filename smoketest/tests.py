@@ -450,7 +450,7 @@ class StatusTestResult(TestResult):
         seen = list(str(self.response.status_code))
         if 'X' in wished:
             seen = list(map(lambda i_v: 'X' if wished[i_v[0]] == 'X' else i_v[1],
-                       enumerate(seen)))
+                        enumerate(seen)))
         return wished == seen
 
 
