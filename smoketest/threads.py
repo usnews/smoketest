@@ -3,6 +3,10 @@ import threading
 from smoketest.utils import chunkify
 
 
+def alive_threads(threads):
+    return (t for t in threads if t.is_alive())
+
+
 def get_threads_and_stop_event(directives, n_threads):
     stop_event = threading.Event()
     threads = []

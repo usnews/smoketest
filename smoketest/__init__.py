@@ -15,7 +15,10 @@ from smoketest.settings import (
     get_default_user_agent,
     get_plugin_names,
 )
-from smoketest.threads import get_threads_and_stop_event
+from smoketest.threads import (
+    alive_threads,
+    get_threads_and_stop_event,
+)
 
 
 def load_plugins():
@@ -149,7 +152,7 @@ def main():
             # Using threading.active_count() > 1 here causes a problem where a
             # keyboard interrupt sometimes results in the program hanging...
             # not sure why.
-            while [t for t in threads if t.is_alive()]:
+            while any(alive_threads(threads)):
                 pass
         except KeyboardInterrupt:
             # Write to console even if output is going to file
@@ -159,7 +162,7 @@ def main():
             ))
             sys.__stdout__.flush()
             stop_event.set()
-            while [t for t in threads if t.is_alive()]:
+            while any(alive_threads(threads)):
                 for thread in threads:
                     thread.join(0.1)
             sys.__stdout__.write('\nSmoketest cancelled by user.\n')
