@@ -1,6 +1,6 @@
 #!/bin/bash
 if [ ! -d "sphinx_venv" ]; then
-    virtualenv -p python2.7 sphinx_venv
+    virtualenv sphinx_venv
     source sphinx_venv/bin/activate
     pip install Sphinx
 fi
