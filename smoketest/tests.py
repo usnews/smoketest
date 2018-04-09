@@ -3,7 +3,7 @@ import inspect
 import json
 import os
 import re
-from StringIO import StringIO
+from io import BytesIO
 import string
 from xml.etree.ElementTree import ParseError
 from xml.etree import ElementTree
@@ -329,6 +329,9 @@ class TestResult(object):
         """
         raise NotImplementedError
 
+    def __bool__(self):
+        return self.__nonzero__()
+
 
 class AlwaysPassingTestResult(TestResult):
 
@@ -431,7 +434,7 @@ class JSONTestResult(TestResult):
 
     def _get_string_to_test(self):
         return select_from_json(
-            self.response.text.encode("UTF-8"),
+            self.response.text,
             self.test.selector
         )
 
@@ -446,8 +449,8 @@ class StatusTestResult(TestResult):
         wished = [i.upper() for i in list(str(self.test.target_code))]
         seen = list(str(self.response.status_code))
         if 'X' in wished:
-            seen = map(lambda (i, v): 'X' if wished[i] == 'X' else v,
-                       enumerate(seen))
+            seen = list(map(lambda i_v: 'X' if wished[i_v[0]] == 'X' else i_v[1],
+                        enumerate(seen)))
         return wished == seen
 
 
@@ -540,7 +543,7 @@ class DTDTestResult(TestResult):
 
     def __nonzero__(self):
         xmlschema = lxml.etree.DTD(self.test.dtd_filename)
-        s = StringIO(self.response.text.encode("UTF-8"))
+        s = BytesIO(self.response.text.encode("UTF-8"))
         try:
             response_doc = lxml.etree.parse(s)
         except XMLSyntaxError as e:
@@ -581,7 +584,7 @@ class JSONSchemaTestResult(TestResult):
                 return False
 
         try:
-            json_response = json.loads(self.response.text.encode("UTF-8"))
+            json_response = json.loads(self.response.text)
         except ValueError:
             self._description = 'Response body was not valid JSON'
             return False
@@ -591,7 +594,7 @@ class JSONSchemaTestResult(TestResult):
         except jsonschema.exceptions.ValidationError as e:
             self._description = 'Response did not obey {0}: {1}'.format(
                 self.test.schema_filename,
-                e.message,
+                e.args[0],
             )
             return False
         except (jsonschema.exceptions.SchemaError, AttributeError) as e:
@@ -600,7 +603,7 @@ class JSONSchemaTestResult(TestResult):
             # too to catch some more schema problems.
             self._description = 'Schema file {0} had a problem: {1}'.format(
                 self.test.schema_filename,
-                e.message,
+                e.args[0],
             )
             return False
 

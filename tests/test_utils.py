@@ -8,25 +8,25 @@ class TestUtilities(unittest.TestCase):
 
         # ordinary case where 2 < n < len(seq)
         self.assertEqual(
-            chunkify(range(10), 3),
+            chunkify(list(range(10)), 3),
             [[0, 1, 2, ], [3, 4, 5, ], [6, 7, 8, 9, ]]
         )
 
         # n = 1 case
         self.assertEqual(
-            chunkify(range(10), 1),
-            [range(10)],
+            chunkify(list(range(10)), 1),
+            [list(range(10))],
         )
 
         # n == len(seq) case
         self.assertEqual(
-            chunkify(range(10), 10),
-            map(lambda x: [x], range(10)),
+            chunkify(list(range(10)), 10),
+            list(map(lambda x: [x], range(10))),
         )
 
         # n > len(seq) case
         self.assertEqual(
-            chunkify(range(1), 2),
+            chunkify(list(range(1)), 2),
             [[], [0]],
         )
 

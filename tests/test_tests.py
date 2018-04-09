@@ -345,8 +345,9 @@ class TestTestResults(unittest.TestCase):
         )
         self.assertFalse(bool(json_schema_test_result))
         self.assertEqual(
-            "Response did not obey {0}: u'foo' is a required property".format(
-                self.json_schema_filename
+            "Response did not obey {0}: {1} is a required property".format(
+                self.json_schema_filename,
+                repr(u'foo'),
             ),
             json_schema_test_result.description,
         )
@@ -752,7 +753,6 @@ class TestSelectFromJsonifiable(unittest.TestCase):
             select_from_json(json_string, selector)
         except Exception as e:
             self.assertIsInstance(e, ValueError)
-            self.assertEqual(e.message, 'No JSON object could be decoded')
         else:
             assert False, 'No exception was raised!'
 
@@ -766,7 +766,7 @@ class TestSelectFromJsonifiable(unittest.TestCase):
             select_from_json(json_string, selector)
         except Exception as e:
             self.assertIsInstance(e, ValueError)
-            self.assertEqual(e.message, 'Array found at foo')
+            self.assertEqual(e.args[0], 'Array found at foo')
         else:
             assert False, 'No exception was raised!'
 
@@ -780,7 +780,7 @@ class TestSelectFromJsonifiable(unittest.TestCase):
             select_from_json(json_string, selector)
         except Exception as e:
             self.assertIsInstance(e, IndexError)
-            self.assertEqual(e.message, 'Index 1 not found')
+            self.assertEqual(e.args[0], 'Index 1 not found')
         else:
             assert False, 'No exception was raised!'
 
@@ -794,6 +794,6 @@ class TestSelectFromJsonifiable(unittest.TestCase):
             select_from_json(json_string, selector)
         except Exception as e:
             self.assertIsInstance(e, KeyError)
-            self.assertEqual(e.message, 'Key baz not found')
+            self.assertEqual(e.args[0], 'Key baz not found')
         else:
             assert False, 'No exception was raised!'

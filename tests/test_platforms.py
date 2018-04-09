@@ -1,5 +1,9 @@
 import unittest
 
+import six
+if six.PY3:
+    from importlib import reload
+
 
 class TestPlatforms(unittest.TestCase):
 

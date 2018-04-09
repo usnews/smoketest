@@ -1,7 +1,11 @@
+from __future__ import unicode_literals
+
 from collections import OrderedDict
 import json
 import sys
 import time
+
+from six import string_types
 
 
 class Constants(object):
@@ -56,7 +60,7 @@ def select_with_key(key):
     given key.
     """
     def _logger(class_):
-        assert isinstance(key, str)
+        assert isinstance(key, string_types)
         assert issubclass(class_, Logger)
         Constants.available_logger_classes[key] = class_
         return class_
@@ -241,7 +245,7 @@ class _ShellLogger(Logger):
 
         self.failure_count += 1
         # succinct
-        if self.options.quiet or self.options.verbosity <= 1:
+        if self.options.quiet or not self.options.verbosity:
             message = "\n[FAILED: {0}]\n".format(url)
 
         # verbose
@@ -294,7 +298,7 @@ class _ShellLogger(Logger):
                 message,
                 _Colors.ENDC,
             ])
-            sys.stdout.write(full_message.encode('utf-8'))
+            sys.stdout.write(full_message)
 
 
 @select_with_key('json')
