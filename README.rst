@@ -31,13 +31,13 @@ Features
 Requirements
 ============
 
-Smoketest requires Python 2.7.
+Smoketest requires Python 2.7 or 3.4 and above.
 
 Installation
 ============
 
-You should probably install into a Python 2.7 virtual environment. To start
-with a fresh one, do::
+You should probably install into a Python virtual environment with a supported
+Python version. To start with a fresh one, do::
 
     virtualenv venv
     source venv/bin/activate
@@ -120,3 +120,12 @@ To build the documentation as HTML, do::
     ./bin/build_docs
 
 Now you have HTML documentation in the `docs/build/html/` directory.
+
+To force a particular version of Python for the virtualenv used for building
+the documentation, create virtualenv (however you'd like, Python 3.6 example
+below) at `sphinx_venv/` at the project root and install Sphinx::
+
+    python3.6 -m venv sphinx_venv
+    sphinx_venv/bin/pip install Sphinx
+
+and then run `bin/build_docs` as above.
