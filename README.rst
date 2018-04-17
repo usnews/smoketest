@@ -13,6 +13,8 @@ Features
 
   * Check redirect locations
 
+  * Check HTTP header values
+
   * Check that HTML elements match string patterns
 
   * Check that JSON values match string patterns

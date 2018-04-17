@@ -200,6 +200,24 @@ Finally, you can test that a tag does not appear on a page like this:
             selector: meta[name='og:title']
             when: never
 
+HTTP response headers
+~~~~~~~~~~~~~~~~~~~~~
+
+You can test that particular HTTP response headers match what you expect by
+adding a `headers` list to a check directive. For example:
+
+.. code-block:: yaml
+
+    -   directive: check
+        url: https://www.usnews.com/news/best-countries
+        headers:
+        -
+            header: Content-Type
+            equals: text/html; charset=UTF-8
+        -
+            header: Server
+            equals: Apache
+
 XML contents
 ~~~~~~~~~~~~
 
