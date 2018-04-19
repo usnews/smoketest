@@ -13,7 +13,7 @@ Features
 
   * Check redirect locations
 
-  * Check HTTP header values
+  * Check HTTP response headers
 
   * Check that HTML elements match string patterns
 
