@@ -14,7 +14,7 @@ def _get_settings():
         )
         if os.path.isfile(filepath):
             with open(filepath) as f:
-                _SETTINGS = yaml.load(f)
+                _SETTINGS = yaml.load(f) or {}
         else:
             _SETTINGS = {}
     return _SETTINGS
