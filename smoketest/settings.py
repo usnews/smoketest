@@ -6,6 +6,8 @@ _SETTINGS = None
 
 
 def _get_settings():
+    # Load settings.yaml if it hasn't been loaded yet, then return the
+    # settings.
     global _SETTINGS
     if _SETTINGS is None:
         filepath = os.path.join(
@@ -14,6 +16,7 @@ def _get_settings():
         )
         if os.path.isfile(filepath):
             with open(filepath) as f:
+                # If settings file is empty, just return an empty dictionary
                 _SETTINGS = yaml.load(f) or {}
         else:
             _SETTINGS = {}
