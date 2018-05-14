@@ -17,7 +17,7 @@ def _get_settings():
         if os.path.isfile(filepath):
             with open(filepath) as f:
                 # If settings file is empty, just return an empty dictionary
-                _SETTINGS = yaml.load(f) or {}
+                _SETTINGS = yaml.safe_load(f) or {}
         else:
             _SETTINGS = {}
     return _SETTINGS

@@ -271,7 +271,7 @@ class FileParser(object):
             if self.filename.endswith('json'):
                 input_ = json.load(file_)
             else:
-                input_ = yaml.load(file_)
+                input_ = yaml.safe_load(file_)
 
         # Parse input
         directives = []
