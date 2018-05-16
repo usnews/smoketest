@@ -385,8 +385,13 @@ class TestTestResults(unittest.TestCase):
     def test_header_test(self):
         from smoketest.tests import (
             HeaderTest,
+            TextMatchingMethod,
         )
-        header_test = HeaderTest('X-Some-Header', 'hi')
+        header_test = HeaderTest(
+            'X-Some-Header',
+            TextMatchingMethod('equals', 'ello'),
+            'hi',
+        )
         response = Mock()
         response.headers = {
             'X-Some-Header': 'bye',
