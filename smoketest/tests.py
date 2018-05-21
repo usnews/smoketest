@@ -265,12 +265,10 @@ def get_header_tests(elem, options):
                     text_matching_methodname,
                     test[text_matching_methodname],
                 )
-                value = test.get(text_matching_methodname)
                 header_tests.append(
                     HeaderTest(
                         header,
                         text_matching_method,
-                        value,
                     )
                 )
 
@@ -767,10 +765,9 @@ class JSONSchemaTest(AbstractTest):
 
 class HeaderTest(AbstractTest):
 
-    def __init__(self, header, text_matching_method, value):
+    def __init__(self, header, text_matching_method):
         self.header = header
         self.text_matching_method = text_matching_method
-        self.value = value
 
     @property
     def description(self):
