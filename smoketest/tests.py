@@ -640,7 +640,6 @@ class HeaderTestResult(TestResult):
         )
 
     def __nonzero__(self):
-        desired_value = self.test.value
         actual_value = self._get_header_value_from_response()
         match = self.test.text_matching_method(actual_value)
         return bool(match)
