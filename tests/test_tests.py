@@ -385,8 +385,12 @@ class TestTestResults(unittest.TestCase):
     def test_header_test(self):
         from smoketest.tests import (
             HeaderTest,
+            TextMatchingMethod,
         )
-        header_test = HeaderTest('X-Some-Header', 'hi')
+        header_test = HeaderTest(
+            'X-Some-Header',
+            TextMatchingMethod('equals', 'ello'),
+        )
         response = Mock()
         response.headers = {
             'X-Some-Header': 'bye',
@@ -629,7 +633,6 @@ class TestParsers(unittest.TestCase):
         header_tests = get_header_tests(elem, options)
         self.assertEqual(1, len(header_tests))
         self.assertEqual('X-Some-Header', header_tests[0].header)
-        self.assertEqual('hi', header_tests[0].value)
 
 
 class TestSelectFromJsonifiable(unittest.TestCase):

@@ -256,9 +256,24 @@ def get_json_schema_tests(elem, options):
 def get_header_tests(elem, options):
     all_header_tests = []
     for test in elem.get('headers', []):
+        header_tests = []
         header = test['header']
-        value = test['equals']
-        all_header_tests.append(HeaderTest(header, value))
+
+        for text_matching_methodname in TextMatchingMethod.available_methods:
+            if text_matching_methodname in test:
+                text_matching_method = TextMatchingMethod(
+                    text_matching_methodname,
+                    test[text_matching_methodname],
+                )
+                header_tests.append(
+                    HeaderTest(
+                        header,
+                        text_matching_method,
+                    )
+                )
+
+        all_header_tests.extend(header_tests)
+
     return all_header_tests
 
 
@@ -623,9 +638,9 @@ class HeaderTestResult(TestResult):
         )
 
     def __nonzero__(self):
-        desired_value = self.test.value
         actual_value = self._get_header_value_from_response()
-        return desired_value == actual_value
+        match = self.test.text_matching_method(actual_value)
+        return bool(match)
 
     def _get_header_value_from_response(self):
         return self.response.headers.get(self.test.header)
@@ -750,10 +765,13 @@ class JSONSchemaTest(AbstractTest):
 
 class HeaderTest(AbstractTest):
 
-    def __init__(self, header, value):
+    def __init__(self, header, text_matching_method):
         self.header = header
-        self.value = value
+        self.text_matching_method = text_matching_method
 
     @property
     def description(self):
-        return u'{0} header equals {1}'.format(self.header, self.value)
+        return u'{0} header {1}'.format(
+            self.header,
+            self.text_matching_method.description,
+        )
