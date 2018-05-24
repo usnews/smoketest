@@ -1,10 +1,11 @@
+import json
 import os
+import tempfile
 import unittest
 
 from mock import (
     MagicMock,
     Mock,
-    patch,
 )
 
 
@@ -75,28 +76,27 @@ class TestFileParser(unittest.TestCase):
     """Test that smoketest is correctly parsing the files
     """
 
-    def setUp(self):
-        import random
-        self.json_filename = u'it-is-just-for-testing-{0}.json'.format(
-            random.randint(0, 999999),
+    def _create_file(self, extension):
+        f = tempfile.NamedTemporaryFile(
+            mode='w',
+            suffix=extension,
+            delete=False,
         )
-        open(self.json_filename, 'w').close()
+        self._temporary_files.append(f)
+        return f
 
-        self.yaml_filename = u'it-is-just-for-testing-{0}.yaml'.format(
-            random.randint(0, 999999),
-        )
-        with open(self.yaml_filename, 'w') as f:
-            f.write('   - http://www.usnews.com')
+    def setUp(self):
+        self._temporary_files = []
 
     def tearDown(self):
-        os.unlink(self.json_filename)
-        os.unlink(self.yaml_filename)
+        for f in self._temporary_files:
+            os.unlink(f.name)
 
-    @patch("smoketest.directives.json.load")
-    def test_generate_directives_only_levels(self, mock_json_load):
+    def test_generate_directives_only_levels(self):
         from smoketest.directives import FileParser
 
-        mock_json_load.return_value = [
+        json_file = self._create_file('.json')
+        json_file.write(json.dumps([
             {
                 'directive': 'check',
                 'url': 'www.mock.com'
@@ -111,13 +111,14 @@ class TestFileParser(unittest.TestCase):
                 'url': 'www.mock.com',
                 'only_levels': ['stag', 'live']
             },
-        ]
+        ]))
+        json_file.close()
 
         # uat1 level should only pick up the first directive
         options = Mock()
         options.scheme = None
         options.level = 'uat1'
-        file_parser = FileParser(self.json_filename, options)
+        file_parser = FileParser(json_file.name, options)
         directives = list(file_parser.generate_directives())
         self.assertEquals(len(directives), 1)
 
@@ -126,7 +127,7 @@ class TestFileParser(unittest.TestCase):
         options = Mock()
         options.scheme = None
         options.level = 'stag'
-        file_parser = FileParser(self.json_filename, options)
+        file_parser = FileParser(json_file.name, options)
         directives = list(file_parser.generate_directives())
         self.assertEquals(len(directives), 2)
 
@@ -135,27 +136,32 @@ class TestFileParser(unittest.TestCase):
         options = Mock()
         options.scheme = None
         options.level = 'live'
-        file_parser = FileParser(self.json_filename, options)
+        file_parser = FileParser(json_file.name, options)
         directives = list(file_parser.generate_directives())
         self.assertEquals(len(directives), 3)
 
-    @patch("smoketest.directives.json.load")
-    def test_generate_directives_only_levels_works_with_include(self, mock_json_load):
+    def test_generate_directives_only_levels_works_with_include(self):
         from smoketest.directives import FileParser
 
-        mock_json_load.return_value = [
+        yaml_file = self._create_file('.yaml')
+        yaml_file.write('- https://www.usnews.com')
+        yaml_file.close()
+
+        json_file = self._create_file('.json')
+        json_file.write(json.dumps([
             {
                 'directive': 'include',
-                'filename': self.yaml_filename,
+                'filename': yaml_file.name,
                 'only_levels': ['uat1']
             },
-        ]
+        ]))
+        json_file.close()
 
         # live level should not pick up the directive
         options = Mock()
         options.scheme = None
         options.level = 'live'
-        file_parser = FileParser(self.json_filename, options)
+        file_parser = FileParser(json_file.name, options)
         directives = list(file_parser.generate_directives())
         self.assertEquals(len(directives), 0)
 
@@ -164,27 +170,27 @@ class TestFileParser(unittest.TestCase):
         options = Mock()
         options.scheme = None
         options.level = 'uat1'
-        file_parser = FileParser(self.json_filename, options)
+        file_parser = FileParser(json_file.name, options)
         directives = list(file_parser.generate_directives())
         self.assertEquals(len(directives), 1)
 
-
-    @patch("smoketest.directives.json.load")
-    def test_generate_directives_only_levels_is_not_a_list(self, mock_json_load):
+    def test_generate_directives_only_levels_is_not_a_list(self):
         from smoketest.directives import FileParser
 
-        mock_json_load.return_value = [
+        json_file = self._create_file('.json')
+        json_file.write(json.dumps([
             {
                 'directive': 'check',
                 'url': 'example.com',
                 'only_levels': 'string!'
             },
-        ]
+        ]))
+        json_file.close()
 
         options = Mock()
         options.scheme = None
         options.level = 'uat1'
-        fileparser = FileParser(self.json_filename, options)
+        fileparser = FileParser(json_file.name, options)
         self.assertRaises(
             Exception,
             next,
