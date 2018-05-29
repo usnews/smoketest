@@ -198,6 +198,21 @@ class _ShellLogger(Logger):
             "body: {7}",
             "",
         ]),
+        5:
+        u"\n".join([
+            "",
+            "url: {0}",
+            "test: {1}",
+            "result: {2}",
+            "passed: {3}",
+            "time: {4}",
+            "platform: {5}",
+            "hops: {6}",
+            "request headers: {7}",
+            "response headers: {8}",
+            "body: {9}",
+            "",
+        ]),
     }
 
     def log_options(self):
@@ -208,6 +223,14 @@ class _ShellLogger(Logger):
         result_desc = result.description
         elapsed = response.elapsed
         hops = _calculate_hops(response, follow_redirects)
+        formatted_request_headers = []
+        for k, v in response.request.headers.items():
+            formatted_request_headers.append('    {0}: {1}'.format(k, v))
+        request_headers = '\n' + '\n'.join(formatted_request_headers)
+        formatted_response_headers = []
+        for k, v in response.headers.items():
+            formatted_response_headers.append('    {0}: {1}'.format(k, v))
+        response_headers = '\n' + '\n'.join(formatted_response_headers)
 
         self.success_count += 1
         if self.options.quiet or not self.options.verbosity:
@@ -229,10 +252,16 @@ class _ShellLogger(Logger):
 
         # super duper verbose
         # calling response.text can be expensive, so only do so if needed
-        else:
+        elif self.options.verbosity == 4:
             message = self._verbose_templates[4].format(
                 url, test_desc, result_desc, True, elapsed, platform.name,
                 hops, response.text)
+
+        # super duper extra verbose
+        else:
+            message = self._verbose_templates[5].format(
+                url, test_desc, result_desc, True, elapsed, platform.name,
+                hops, request_headers, response_headers, response.text)
 
         self._write_in_color(message, _Colors.GREEN)
 
@@ -242,6 +271,14 @@ class _ShellLogger(Logger):
         elapsed = response.elapsed
         platform_name = platform.name if platform else None
         hops = _calculate_hops(response, follow_redirects)
+        formatted_request_headers = []
+        for k, v in response.request.headers.items():
+            formatted_request_headers.append('    {0}: {1}'.format(k, v))
+        request_headers = '\n' + '\n'.join(formatted_request_headers)
+        formatted_response_headers = []
+        for k, v in response.headers.items():
+            formatted_response_headers.append('    {0}: {1}'.format(k, v))
+        response_headers = '\n' + '\n'.join(formatted_response_headers)
 
         self.failure_count += 1
         # succinct
@@ -261,10 +298,16 @@ class _ShellLogger(Logger):
 
         # super duper verbose
         # calling response.text can be expensive, so only do so if needed
-        else:
+        elif self.options.verbosity == 4:
             message = self._verbose_templates[4].format(
                 url, test_desc, result_desc, False, elapsed, platform_name,
                 hops, response.text)
+
+        # super duper extra verbose
+        else:
+            message = self._verbose_templates[5].format(
+                url, test_desc, result_desc, False, elapsed, platform_name,
+                hops, request_headers, response_headers, response.text)
 
         self._write_in_color(message, _Colors.RED)
 
@@ -348,7 +391,8 @@ class _JsonLogger(Logger):
 
         if self.options.verbosity >= 4:
             data.update(OrderedDict([
-                ('headers', json.dumps(dict(response.headers))),
+                ('request_headers', json.dumps(dict(response.request.headers))),
+                ('response_headers', json.dumps(dict(response.headers))),
                 ('body', response.text),
             ]))
 
@@ -379,7 +423,8 @@ class _JsonLogger(Logger):
 
         if self.options.verbosity >= 4:
             data.update(OrderedDict([
-                ('headers', json.dumps(dict(response.headers))),
+                ('request_headers', json.dumps(dict(response.request.headers))),
+                ('response_headers', json.dumps(dict(response.headers))),
                 ('body', response.text),
             ]))
 
