@@ -224,6 +224,10 @@ def generate_directives_from_file(filename, options):
     return FileParser(filename, options).generate_directives()
 
 
+class InputFileError(Exception):
+    pass
+
+
 class FileParser(object):
     """Parses an input file into directives
 
@@ -267,11 +271,22 @@ class FileParser(object):
 
     def _generate_directives_from_json_or_yaml(self):
         # Load input
-        with open(self.filename, 'r') as file_:
-            if self.filename.endswith('json'):
-                input_ = json.load(file_)
-            else:
-                input_ = yaml.safe_load(file_)
+        try:
+            with open(self.filename, 'r') as file_:
+                if self.filename.endswith('json'):
+                    try:
+                        input_ = json.load(file_)
+                    except ValueError as e:
+                        # This happens if the JSON was invalid.
+                        raise InputFileError(str(e))
+                else:
+                    try:
+                        input_ = yaml.safe_load(file_)
+                    except yaml.error.YAMLError as e:
+                        raise InputFileError(str(e))
+        except IOError as e:
+            # This happens if the file doesn't exist
+            raise InputFileError(str(e))
 
         # Parse input
         directives = []
@@ -309,11 +324,15 @@ class FileParser(object):
 
     def _generate_directives_from_dumb_list(self):
         directives = []
-        with open(self.filename, 'r') as f:
-            for line in f:
-                directive = self._get_directive_from_dumb_list_line(line)
-                if directive:
-                    directives.extend(directive.directives)
+        try:
+            with open(self.filename, 'r') as f:
+                for line in f:
+                    directive = self._get_directive_from_dumb_list_line(line)
+                    if directive:
+                        directives.extend(directive.directives)
+        except IOError as e:
+            # This happens if the file doesn't exist
+            raise InputFileError(str(e))
 
         for directive in directives:
             yield directive

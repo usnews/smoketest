@@ -197,6 +197,53 @@ class TestFileParser(unittest.TestCase):
             fileparser.generate_directives(),
         )
 
+    def test_generate_directives_from_nonexistent_file(self):
+        from smoketest.directives import (
+            InputFileError,
+            generate_directives_from_file,
+        )
+        self.assertRaises(
+            InputFileError,
+            next,
+            generate_directives_from_file('fake.txt', None)
+        )
+
+        self.assertRaises(
+            InputFileError,
+            next,
+            generate_directives_from_file('fake.yaml', None),
+        )
+
+    def test_generate_directives_from_invalid_yaml_file(self):
+        from smoketest.directives import (
+            InputFileError,
+            generate_directives_from_file,
+        )
+        invalid_yaml_file = self._create_file('.yaml')
+        invalid_yaml_file.write('key: -')
+        invalid_yaml_file.close()
+
+        self.assertRaises(
+            InputFileError,
+            next,
+            generate_directives_from_file(invalid_yaml_file.name, None)
+        )
+
+    def test_generate_directives_from_invalid_json_file(self):
+        from smoketest.directives import (
+            InputFileError,
+            generate_directives_from_file,
+        )
+        invalid_json_file = self._create_file('.json')
+        invalid_json_file.write('x')
+        invalid_json_file.close()
+
+        self.assertRaises(
+            InputFileError,
+            next,
+            generate_directives_from_file(invalid_json_file.name, None)
+        )
+
 
 class TestDirectives(unittest.TestCase):
     """Tests for the Directive classes and related functions.
