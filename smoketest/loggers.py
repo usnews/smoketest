@@ -85,6 +85,14 @@ def _calculate_hops(response, follow_redirects):
     return hops
 
 
+def _format_headers(headers):
+    formatted_headers = []
+    for k, v in headers.items():
+        formatted_headers.append(u'    {0}: {1}'.format(k, v))
+    final_formatted_headers = u'\n' + u'\n'.join(formatted_headers)
+    return final_formatted_headers
+
+
 class Logger(object):
     """Helper class to log successes, failures, and errors, and keep track
     of how many occur.
@@ -195,7 +203,9 @@ class _ShellLogger(Logger):
             "time: {4}",
             "platform: {5}",
             "hops: {6}",
-            "body: {7}",
+            "request headers: {7}",
+            "response headers: {8}",
+            "body: {9}",
             "",
         ]),
     }
@@ -208,6 +218,8 @@ class _ShellLogger(Logger):
         result_desc = result.description
         elapsed = response.elapsed
         hops = _calculate_hops(response, follow_redirects)
+        request_headers = _format_headers(response.request.headers)
+        response_headers = _format_headers(response.headers)
 
         self.success_count += 1
         if self.options.quiet or not self.options.verbosity:
@@ -232,7 +244,7 @@ class _ShellLogger(Logger):
         else:
             message = self._verbose_templates[4].format(
                 url, test_desc, result_desc, True, elapsed, platform.name,
-                hops, response.text)
+                hops, request_headers, response_headers, response.text)
 
         self._write_in_color(message, _Colors.GREEN)
 
@@ -242,6 +254,8 @@ class _ShellLogger(Logger):
         elapsed = response.elapsed
         platform_name = platform.name if platform else None
         hops = _calculate_hops(response, follow_redirects)
+        request_headers = _format_headers(response.request.headers)
+        response_headers = _format_headers(response.headers)
 
         self.failure_count += 1
         # succinct
@@ -264,7 +278,7 @@ class _ShellLogger(Logger):
         else:
             message = self._verbose_templates[4].format(
                 url, test_desc, result_desc, False, elapsed, platform_name,
-                hops, response.text)
+                hops, request_headers, response_headers, response.text)
 
         self._write_in_color(message, _Colors.RED)
 
@@ -348,7 +362,8 @@ class _JsonLogger(Logger):
 
         if self.options.verbosity >= 4:
             data.update(OrderedDict([
-                ('headers', json.dumps(dict(response.headers))),
+                ('request_headers', json.dumps(dict(response.request.headers))),
+                ('response_headers', json.dumps(dict(response.headers))),
                 ('body', response.text),
             ]))
 
@@ -379,7 +394,8 @@ class _JsonLogger(Logger):
 
         if self.options.verbosity >= 4:
             data.update(OrderedDict([
-                ('headers', json.dumps(dict(response.headers))),
+                ('request_headers', json.dumps(dict(response.request.headers))),
+                ('response_headers', json.dumps(dict(response.headers))),
                 ('body', response.text),
             ]))
 
