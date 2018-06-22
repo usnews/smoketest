@@ -225,7 +225,13 @@ def generate_directives_from_file(filename, options):
 
 
 class InputFileError(Exception):
-    pass
+
+    def __init__(self, filename, error):
+        self.filename = filename
+        self.error = error
+
+    def __str__(self):
+        return self.error
 
 
 class FileParser(object):
@@ -278,15 +284,15 @@ class FileParser(object):
                         input_ = json.load(file_)
                     except ValueError as e:
                         # This happens if the JSON was invalid.
-                        raise InputFileError(str(e))
+                        raise InputFileError(self.filename, str(e))
                 else:
                     try:
                         input_ = yaml.safe_load(file_)
                     except yaml.error.YAMLError as e:
-                        raise InputFileError(str(e))
+                        raise InputFileError(self.filename, str(e))
         except IOError as e:
             # This happens if the file doesn't exist
-            raise InputFileError(str(e))
+            raise InputFileError(self.filename, str(e))
 
         # Parse input
         directives = []
@@ -332,7 +338,7 @@ class FileParser(object):
                         directives.extend(directive.directives)
         except IOError as e:
             # This happens if the file doesn't exist
-            raise InputFileError(str(e))
+            raise InputFileError(self.filename, str(e))
 
         for directive in directives:
             yield directive
