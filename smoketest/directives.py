@@ -291,7 +291,7 @@ class FileParser(object):
                     except yaml.error.YAMLError as e:
                         raise InputFileError(self.filename, str(e))
         except IOError as e:
-            # This happens if the file doesn't exist
+            # This happens if the file doesn't exist.
             raise InputFileError(self.filename, str(e))
 
         # Parse input
@@ -337,7 +337,7 @@ class FileParser(object):
                     if directive:
                         directives.extend(directive.directives)
         except IOError as e:
-            # This happens if the file doesn't exist
+            # This happens if the file doesn't exist.
             raise InputFileError(self.filename, str(e))
 
         for directive in directives:
