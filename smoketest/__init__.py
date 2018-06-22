@@ -135,7 +135,7 @@ def main():
         try:
             directives.extend(generate_directives_from_file(filename, args))
         except InputFileError as e:
-            print('Smoketest had a problem with the input file {0}:'.format(
+            print('Smoketest had a problem with the input file "{0}":'.format(
                 filename
             ))
             print(e)
