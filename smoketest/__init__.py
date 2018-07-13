@@ -5,7 +5,10 @@ import sys
 
 import argparse
 
-from smoketest.directives import generate_directives_from_file
+from smoketest.directives import (
+    InputFileError,
+    generate_directives_from_file,
+)
 from smoketest.loggers import (
     Constants as LoggingConstants,
     get_logger,
@@ -129,7 +132,14 @@ def main():
 
     directives = []
     for filename in args.input_filenames:
-        directives.extend(generate_directives_from_file(filename, args))
+        try:
+            directives.extend(generate_directives_from_file(filename, args))
+        except InputFileError as e:
+            print('Smoketest had a problem with the input file "{0}":'.format(
+                e.filename
+            ))
+            print(e)
+            sys.exit(1)
 
     logger = get_logger(args)
     logger.start()
