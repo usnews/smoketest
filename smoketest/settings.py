@@ -36,7 +36,7 @@ def get_default_threads(level):
 
 
 def get_default_user_agent():
-    fallback = 'Smoketest (http://www.usnews.com)'
+    fallback = 'Smoketest (https://www.usnews.com)'
     return _get_settings().get(
         'default_user_agent',
         fallback,

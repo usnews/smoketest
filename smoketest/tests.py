@@ -405,7 +405,7 @@ class HTMLTestResult(TestResult):
             try:
                 # .text_content() returns the text content of the element,
                 # including the text content of its children, with no markup.
-                # See http://lxml.de/lxmlhtml.html#html-element-methods
+                # See https://lxml.de/lxmlhtml.html#html-element-methods
                 string_to_test = element.text_content()
             except AttributeError:
                 string_to_test = None
