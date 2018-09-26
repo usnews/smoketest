@@ -38,7 +38,7 @@ needed if the level would be omitted in the case of ``live``.
 
 If your preproduction sites use the form https://stage.usnews.com or
 https://local.usnews.com instead of https://www-stag.usnews.com and similar,
-you can do:
+you can add the following to your ``settings.yaml`` file:
 
 .. code-block:: yaml
 
