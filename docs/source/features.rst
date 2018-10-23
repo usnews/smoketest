@@ -36,8 +36,19 @@ be https://www.usnews.com/opinion and https://www-stag.usnews.com/opinion,
 respectively. It tries to intelligently remove extra ".", "-", and "/" as
 needed if the level would be omitted in the case of ``live``.
 
-Note that the default level is ``live``, so running smoketest without a level
-argument is equivalent to running it with ``--level=live``.
+If your preproduction sites use the form https://stage.usnews.com or
+https://local.usnews.com instead of https://www-stag.usnews.com and similar,
+you can add the following to your ``settings.yaml`` file:
+
+.. code-block:: yaml
+
+    level_token: 'www'
+
+This allows keeping your expectations in the form https://www.usnews.com and
+you can specify ``--level=stage`` or similar.
+
+The default level is ``live``, so running smoketest without a level argument
+is equivalent to running it with ``--level=live``.
 
 Sometimes you may also want to transform URLs to specify a port; for example
 you may want to test http://www.usnews.com:81. You can do this by running
