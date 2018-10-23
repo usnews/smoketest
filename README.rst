@@ -110,7 +110,7 @@ For more examples see the complete documentation under the ``docs/`` directory.
 Running tests
 =============
 
-To run the unit tests, make sure you have `tox <http://tox.readthedocs.io/en/latest/install.html>`_ installed, then do::
+To run the unit tests, make sure you have `tox <https://tox.readthedocs.io/en/latest/install.html>`_ installed, then do::
 
     tox
 

@@ -121,7 +121,7 @@ def uncachebust(url):
 def chunkify(seq, n):
     """Split seq into n roughly equally sized lists.
 
-    http://stackoverflow.com/questions/2130016/splitting-a-list-of-arbitrary-size-into-only-roughly-n-equal-parts
+    https://stackoverflow.com/questions/2130016/splitting-a-list-of-arbitrary-size-into-only-roughly-n-equal-parts
     """
     avg = len(seq) / float(n)
     out = []
@@ -134,7 +134,7 @@ def chunkify(seq, n):
     return out
 
 
-#http://code.activestate.com/recipes/576563-cached-property/
+#https://code.activestate.com/recipes/576563-cached-property/
 def cached_property(fun):
     """A memoize decorator for class properties."""
     @functools.wraps(fun)

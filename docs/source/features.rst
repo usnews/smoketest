@@ -262,7 +262,7 @@ JSON schema compliance
 
 You can check that a URL returns a JSON body that adheres to a JSON schema.
 The JSON schema must follow the specification described at
-http://json-schema.org/.
+https://json-schema.org/.
 
 Here is an example of how to configure such a test with YAML:
 
