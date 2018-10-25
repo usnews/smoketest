@@ -634,13 +634,18 @@ class HeaderTestResult(TestResult):
 
     @property
     def description(self):
-        return u'{0} header was {1}'.format(
-            self.test.header,
-            self._get_header_value_from_response(),
-        )
+        header = self.test.header
+        header_value = self._get_header_value_from_response()
+        if header_value is None:
+            description = u'{0} header was not present'.format(header)
+        else:
+            description = u'{0} header was {1}'.format(header, header_value)
+        return description
 
     def __nonzero__(self):
         actual_value = self._get_header_value_from_response()
+        if actual_value is None:
+            return False
         match = self.test.text_matching_method(actual_value)
         return bool(match)
 

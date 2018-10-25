@@ -402,6 +402,24 @@ class TestTestResults(unittest.TestCase):
             result.description,
         )
 
+    def test_header_test_missing_response_header(self):
+        from smoketest.tests import (
+            HeaderTest,
+            TextMatchingMethod,
+        )
+        header_test = HeaderTest(
+            'X-Some-Header',
+            TextMatchingMethod('equals', 'bye'),
+        )
+        response = Mock()
+        response.headers = {}
+        result = header_test.get_result(response)
+        self.assertFalse(result)
+        self.assertEqual(
+            'X-Some-Header header was not present',
+            result.description,
+        )
+
 
 class TestTextMatchingMethod(unittest.TestCase):
     """Tests for the class TextMatchingMethod
