@@ -2,6 +2,9 @@
 Smoketest
 =========
 
+.. image:: https://travis-ci.org/usnews/smoketest.svg?branch=master
+    :target: https://travis-ci.org/usnews/smoketest
+
 Smoketest is a pretty simple website tester written in Python.
 
 Features
