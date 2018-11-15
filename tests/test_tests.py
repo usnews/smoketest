@@ -470,6 +470,20 @@ class TestTextMatchingMethod(unittest.TestCase):
         self.assertTrue(text_matching_method('a^hello$b'))
         self.assertFalse(text_matching_method('hello'))
 
+    def test_collapse_whitespace(self):
+        """Tests handling of whitespace characters.
+
+        ASCII whitespace characters and non-breaking spaces (0xa0)
+        should all be collapsed into regular spaces.
+        """
+        from smoketest.tests import TextMatchingMethod
+        text_matching_method = TextMatchingMethod(
+            'equals',
+            '^hello hello hello hello$',
+        )
+        self.assertTrue(text_matching_method(
+            u'^hello\t\thello\n\n\nhello\xa0hello$'))
+
 
 class TestParsers(unittest.TestCase):
     """Tests for the parser functions

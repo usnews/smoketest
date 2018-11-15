@@ -293,13 +293,17 @@ class TextMatchingMethod(object):
         self.methodname = methodname
         if text_to_match:
             # Apply HTML whitespace transform
-            text_to_match = re.sub('[' + string.whitespace + ']+', ' ', text_to_match.strip())
+            text_to_match = re.sub(
+                '[' + string.whitespace + u'\xa0' + ']+', ' ',
+                text_to_match.strip())
         self.text_to_match = text_to_match
 
     def __call__(self, text_to_test):
         if text_to_test:
             # Apply HTML whitespace transform
-            text_to_test = re.sub('[' + string.whitespace + ']+', ' ', text_to_test.strip())
+            text_to_test = re.sub(
+                '[' + string.whitespace + u'\xa0' + ']+', ' ',
+                text_to_test.strip())
         if self.methodname == 'regex':
             match = re.search(self.text_to_match, text_to_test)
         elif self.methodname == 'startswith':
@@ -419,7 +423,9 @@ class HTMLTestResult(TestResult):
         if string_to_test:
             # We never care about the whitespace around text in HTML, and it
             # causes false positives, so remove it.
-            string_to_test = string_to_test.strip()
+            string_to_test = re.sub(
+                '[' + string.whitespace + u'\xa0' + ']+', ' ',
+                string_to_test.strip())
 
         return string_to_test
 
