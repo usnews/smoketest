@@ -9,6 +9,22 @@ from mock import (
 )
 
 
+class TestGetTree(unittest.TestCase):
+    """Tests for the get_tree function
+    """
+
+    def test_nonascii_attribute(self):
+        from smoketest.tests import get_tree
+        response = Mock()
+        response.text = u"""
+            <html \u2603 \u2604="yes">
+            </html>
+        """
+        tree = get_tree(response)
+        self.assertIn(u'\u2603', tree.attrib)
+        self.assertEqual('yes', tree.attrib[u'\u2604'])
+
+
 class TestTestResults(unittest.TestCase):
     """Tests for the TestResult classes
     """
