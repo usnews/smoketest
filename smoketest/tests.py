@@ -13,7 +13,7 @@ from xml.etree import ElementTree
 import jsonschema
 import lxml
 from lxml.etree import XMLSyntaxError
-import lxml.html
+import lxml.html.soupparser
 from lxml.cssselect import CSSSelector
 
 from smoketest.utils import (
@@ -53,7 +53,7 @@ def get_tree(response):
         return _TREE_CACHE[response]
     except KeyError:
         try:
-            tree = lxml.html.fromstring(response.text)
+            tree = lxml.html.soupparser.fromstring(response.text)
         except (lxml.etree.XMLSyntaxError, lxml.etree.ParserError):
             tree = None
         _TREE_CACHE[response] = tree
