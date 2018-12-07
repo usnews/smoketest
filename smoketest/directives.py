@@ -72,6 +72,12 @@ class _DummySession(object):
         pass
 
 
+class _DummyRequest(object):
+
+    def __init__(self):
+        self.headers = {}
+
+
 class _DummyResponse(object):
 
     def __init__(self):
@@ -79,6 +85,9 @@ class _DummyResponse(object):
         self.status_code = 200
         self.is_redirect = False
         self.history = ()
+        self.headers = {}
+        self.request = _DummyRequest()
+        self.text = ''
 
 
 def get_session(elem, options):
