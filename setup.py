@@ -15,6 +15,7 @@ config = {
     ],
     'install_requires': [
         'PyYAML',
+        'bs4',
         'cssselect',
         'jsonschema',
         'lxml',
