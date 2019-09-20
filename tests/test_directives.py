@@ -244,6 +244,51 @@ class TestFileParser(unittest.TestCase):
             generate_directives_from_file(invalid_json_file.name, None)
         )
 
+    def test_generate_directives_from_non_sitemap_xml(self):
+        from smoketest.directives import (
+            InputFileError,
+            generate_directives_from_file,
+        )
+
+        xml_file = self._create_file('.xml')
+        xml_file.write('<?xml version="1.0" encoding="utf-8"?><foo></foo>')
+        xml_file.close()
+
+        self.assertRaises(
+            InputFileError,
+            generate_directives_from_file,
+            *(xml_file.name, None)
+        )
+
+    def test_generate_directives_from_xml_sitemap(self):
+        from smoketest.directives import (
+            CheckDirective,
+            FileParser,
+        )
+
+        sitemap_file = self._create_file('.xml')
+        sitemap_file.write(
+            '<?xml version="1.0" encoding="utf-8"?>' +
+            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' +
+            '<url><loc>https://www.example.com</loc></url></urlset>')
+        sitemap_file.close()
+
+        options = Mock()
+        options.cachebust = False
+        options.level = 'live'
+        options.port = None
+        options.scheme = None
+
+        file_parser = FileParser(sitemap_file.name, options)
+        directives = list(file_parser.generate_directives())
+        directive = directives[0]
+
+        self.assertEqual(len(directives), 1)
+
+        self.assertTrue(isinstance(directive, CheckDirective))
+        self.assertEqual(directive.follow_redirects, False)
+        self.assertEqual(directive.urls, ['https://www.example.com'])
+
 
 class TestDirectives(unittest.TestCase):
     """Tests for the Directive classes and related functions.

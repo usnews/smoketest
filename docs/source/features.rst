@@ -86,15 +86,27 @@ at the top level of the repository.
 Input files
 -----------
 
-Smoketest accepts input files in three formats: plaintext (.txt), JSON (.json),
-and YAML (.yaml).
+Smoketest accepts input files in a number of formats. To access the full set of
+features, you can use:
 
-Text files are much simpler to write, but can only do HTTP status code and
+- JSON (.json)
+- YAML (.yaml)
+
+The rest of this article will assume you are working with YAML files, but an
+equivalent JSON file would perform equivalent tests.
+
+Smoketest additionally accepts files in these formats, with the restrictions
+noted below:
+
+- plaintext (.txt)
+- XML (.xml)
+
+Plaintext files are much simpler to write, but can only do HTTP status code and
 redirect tests.
 
-JSON and YAML files both allow you to use the full set of features. The
-rest of this article will assume you are working with YAML files, but an
-equivalent JSON file would perform equivalent tests.
+The only XML files supported at this time are those following the `Sitemap
+protocol <https://www.sitemaps.org/protocol.html>`_. When using an XML sitemap
+as input, only tests to check for a ``200 OK`` HTTP status code are generated.
 
 Directives
 ~~~~~~~~~~

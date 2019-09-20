@@ -4,6 +4,7 @@ import os
 import re
 import socket
 import sys
+from xml.etree import ElementTree
 
 import requests
 from requests.exceptions import RequestException
@@ -24,6 +25,9 @@ from smoketest.tests import (
     RedirectTest,
     StatusTest,
 )
+
+
+SITEMAP_NAMESPACE = 'http://www.sitemaps.org/schemas/sitemap/0.9'
 
 
 def _get_single_url(elem, options):
@@ -250,6 +254,7 @@ class FileParser(object):
         txt
         json
         yaml (or yml)
+        xml (sitemaps only)
     """
 
     _visited_files = set()
@@ -279,6 +284,8 @@ class FileParser(object):
             filetype = parts[-1]
             if filetype in ['json', 'yaml', 'yml']:
                 return self._generate_directives_from_json_or_yaml()
+            elif filetype == 'xml':
+                return self._generate_directives_from_xml()
             else:
                 return self._generate_directives_from_dumb_list()
         else:
@@ -330,6 +337,57 @@ class FileParser(object):
             directive_type = self._directive_map[directive_type]
             if directive_type is IncludeDirective:
                 self._absolutize_element_filename(elem)
+
+            directive = directive_type(elem, self.options)
+            directives += directive.directives
+
+        for directive in directives:
+            yield directive
+
+    def _generate_directives_from_xml(self):
+        # Load input
+        try:
+            with open(self.filename, 'r') as file_:
+                try:
+                    tree = ElementTree.parse(file_)
+                except ElementTree.ParseError as e:
+                    # This happens if the XML couldn't be parsed
+                    raise InputFileError(self.filename, str(e))
+        except IOError as e:
+            # This happens if the file doesn't exist
+            raise InputFileError(self.filename, str(e))
+
+        # Get the root element
+        root = tree.getroot()
+
+        # Check whether it's a sitemap
+        if root.tag == '{' + SITEMAP_NAMESPACE + '}urlset':
+            return self._generate_directives_from_xml_sitemap(root)
+        else:
+            raise InputFileError(self.filename, 'XML input must be a sitemap')
+
+    def _generate_directives_from_xml_sitemap(self, root):
+        """A minimal sitemap looks something like:
+
+        <?xml version="1.0" encoding="utf-8"?>
+        <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+            <url>
+                <loc>https://www.example.com</loc>
+            </url>
+        </urlset>
+        """
+        directive_type = self._directive_map['check']
+        directives = []
+
+        # Generate directives
+        for loc in root.iterfind('./ns:url/ns:loc', {
+            'ns': SITEMAP_NAMESPACE
+        }):
+            elem = {
+                'directive': 'check',
+                'follow_redirects': False,
+                'url': loc.text,
+            }
 
             directive = directive_type(elem, self.options)
             directives += directive.directives
