@@ -18,7 +18,7 @@ config = {
         'bs4',
         'cssselect',
         'jsonschema',
-        'lxml',
+        'lxml<4.4.0',
         'six',
         'requests',
     ],
