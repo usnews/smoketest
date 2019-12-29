@@ -114,9 +114,10 @@ Directives
 Smoketest input files are made up of lists of ``directives``. There are two
 types of directives.
 
-``check`` directives are groups of tests run against one or more URLs. For
-example, here is a check directive that tests that two URLs 200 (note
-``urls`` instead of ``url`` when checking a single URL):
+``check`` directives are groups of tests run against one or more URLs (use a
+key of ``url`` for one URL or ``urls`` with a list of one or more URLs as
+strings). For example, here is a check directive that tests that two URLs both
+return a 200:
 
 .. code-block:: yaml
 
@@ -126,7 +127,7 @@ example, here is a check directive that tests that two URLs 200 (note
             - https://www.usnews.com/cartoons
         status: 200
 
-Here's an example checking a single URL returns a 404:
+Here's an example checking that a single URL returns a 404:
 
 .. code-block:: yaml
 
