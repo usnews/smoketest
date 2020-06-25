@@ -9,6 +9,8 @@ from xml.etree import ElementTree
 import requests
 from requests.exceptions import RequestException
 import yaml
+import urllib
+from urllib.error import URLError
 
 from smoketest.loggers import get_logger
 from smoketest.platforms import get_platforms_from_element
@@ -346,16 +348,29 @@ class FileParser(object):
 
     def _generate_directives_from_xml(self):
         # Load input
-        try:
-            with open(self.filename, 'r') as file_:
+        if 'http' not in self.filename:
+            try:
+                with open(self.filename, 'r') as file_:
+                    try:
+                        tree = ElementTree.parse(file_)
+                    except ElementTree.ParseError as e:
+                        # This happens if the XML couldn't be parsed
+                        raise InputFileError(self.filename, str(e))
+            except IOError as e:
+                # This happens if the file doesn't exist
+                raise InputFileError(self.filename, str(e))
+        else:
+            try:
+                url = self.filename
+                response = urllib.request.urlopen(url)
                 try:
-                    tree = ElementTree.parse(file_)
+                    tree = ElementTree.parse(response)
                 except ElementTree.ParseError as e:
                     # This happens if the XML couldn't be parsed
-                    raise InputFileError(self.filename, str(e))
-        except IOError as e:
-            # This happens if the file doesn't exist
-            raise InputFileError(self.filename, str(e))
+                    raise URLError(self.filename, 'XML could not be parsed from URL')
+            except URLError as e:
+                # This happens if the url can't be reached
+                raise URLError(self.filename, str(e))
 
         # Get the root element
         root = tree.getroot()
@@ -464,6 +479,8 @@ class FileParser(object):
             return directive
 
     def _absolutize_element_filename(self, elem):
+        if 'http' in elem['filename']:
+            return
         # This assumes element's filename is relative to the test file.
         if not os.path.isabs(elem['filename']):
             elem['filename'] = os.path.join(
