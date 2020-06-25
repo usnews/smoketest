@@ -348,7 +348,7 @@ class FileParser(object):
 
     def _generate_directives_from_xml(self):
         # Load input
-        if 'http' not in self.filename:
+        if not self.filename.startswith('http'):
             try:
                 with open(self.filename, 'r') as file_:
                     try:
@@ -479,7 +479,7 @@ class FileParser(object):
             return directive
 
     def _absolutize_element_filename(self, elem):
-        if 'http' in elem['filename']:
+        if elem['filename'].startswith('http'):
             return
         # This assumes element's filename is relative to the test file.
         if not os.path.isabs(elem['filename']):
