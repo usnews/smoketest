@@ -10,7 +10,10 @@ import requests
 from requests.exceptions import RequestException
 import yaml
 import urllib
-from urllib.error import URLError
+try:
+    from urllib.error import URLError
+except ImportError:
+    from urllib2 import URLError
 
 from smoketest.loggers import get_logger
 from smoketest.platforms import get_platforms_from_element
