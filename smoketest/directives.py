@@ -365,7 +365,11 @@ class FileParser(object):
         else:
             try:
                 url = self.filename
-                response = urllib.request.urlopen(url)
+                response = ''
+                if hasattr(urllib, 'request'):
+                    response = urllib.request.urlopen(url)
+                else:
+                    response = urllib.urlopen(url)
                 try:
                     tree = ElementTree.parse(response)
                 except ElementTree.ParseError as e:
