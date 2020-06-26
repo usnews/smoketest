@@ -11,8 +11,10 @@ from requests.exceptions import RequestException
 import yaml
 import urllib
 try:
+    # Python 3
     from urllib.error import URLError
 except ImportError:
+    # Python 2
     from urllib2 import URLError
 
 from smoketest.loggers import get_logger
@@ -365,9 +367,10 @@ class FileParser(object):
         else:
             try:
                 url = self.filename
-                response = ''
+                # Python 3
                 if hasattr(urllib, 'request'):
                     response = urllib.request.urlopen(url)
+                # Python 2
                 else:
                     response = urllib.urlopen(url)
                 try:
