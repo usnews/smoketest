@@ -163,7 +163,7 @@ def main():
             # keyboard interrupt sometimes results in the program hanging...
             # not sure why.
             while any(alive_threads(threads)):
-                pass
+                sleep(0.01)
         except KeyboardInterrupt:
             # Write to console even if output is going to file
             sys.__stdout__.write('\nWaiting for {0} thread{1} to stop...'.format(
