@@ -21,6 +21,7 @@ config = {
         'lxml<4.4.0',
         'six',
         'requests',
+        'pyrsistent<0.17.0', # pyrsistent dropped 2.7 support in 0.17.0
     ],
     'tests_require': [
         'coverage',
