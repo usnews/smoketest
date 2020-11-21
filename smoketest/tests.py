@@ -152,6 +152,7 @@ def get_redirect_tests(elem, options):
     if not exact:
         location = transform_url(
             location,
+            scheme=options.scheme,
             port=options.port,
             level=options.level,
             cachebust=False,
