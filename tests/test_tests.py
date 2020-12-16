@@ -554,6 +554,7 @@ class TestParsers(unittest.TestCase):
             },
         }
         options = Mock()
+        options.scheme = None
         options.port = None
         options.level = None
         options.cachebust = True
