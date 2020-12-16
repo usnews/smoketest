@@ -563,6 +563,53 @@ class TestParsers(unittest.TestCase):
         self.assertEqual(tests[0].target_code, "30X")
         self.assertEqual(tests[0].target_location, "usnews.com")
 
+    def test_redirect_test_with_scheme_option(self):
+        from smoketest.tests import (
+            get_redirect_tests,
+            RedirectTest,
+        )
+        elem = {
+            "redirect": {
+                "status": "30X",
+                "location": "https://www.usnews.com",
+            },
+        }
+        options = Mock()
+        options.scheme = 'http'
+        options.port = None
+        options.level = None
+        options.cachebust = True
+        tests = get_redirect_tests(elem, options)
+        self.assertIsInstance(tests[0], RedirectTest)
+        self.assertEqual(tests[0].target_code, "30X")
+
+        # Redirect should be transformed to http
+        self.assertEqual(tests[0].target_location, "http://www.usnews.com")
+
+    def test_redirect_test_with_scheme_option_and_exact_true(self):
+        from smoketest.tests import (
+            get_redirect_tests,
+            RedirectTest,
+        )
+        elem = {
+            "redirect": {
+                "status": "30X",
+                "location": "https://www.usnews.com",
+                "exact": True,
+            },
+        }
+        options = Mock()
+        options.scheme = 'http'
+        options.port = None
+        options.level = None
+        options.cachebust = True
+        tests = get_redirect_tests(elem, options)
+        self.assertIsInstance(tests[0], RedirectTest)
+        self.assertEqual(tests[0].target_code, "30X")
+
+        # Redirect should not be transformed to http because of "exact": True
+        self.assertEqual(tests[0].target_location, "https://www.usnews.com")
+
     def test_html_test_regex_attribute(self):
         from smoketest.tests import (
             get_html_tests,
