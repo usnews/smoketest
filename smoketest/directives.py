@@ -471,6 +471,7 @@ class FileParser(object):
             if redirect_to:
                 transformed_redirect_to = transform_url(
                     redirect_to,
+                    scheme=self.options.scheme,
                     port=self.options.port,
                     level=self.options.level,
                     cachebust=False,
