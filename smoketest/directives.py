@@ -9,13 +9,6 @@ from xml.etree import ElementTree
 import requests
 from requests.exceptions import RequestException
 import yaml
-import urllib
-try:
-    # Python 3
-    from urllib.error import URLError
-except ImportError:
-    # Python 2
-    from urllib2 import URLError
 
 from smoketest.loggers import get_logger
 from smoketest.platforms import get_platforms_from_element
@@ -358,6 +351,7 @@ class FileParser(object):
                 with open(self.filename, 'r') as file_:
                     try:
                         tree = ElementTree.parse(file_)
+                        root = tree.getroot()
                     except ElementTree.ParseError as e:
                         # This happens if the XML couldn't be parsed
                         raise InputFileError(self.filename, str(e))
@@ -365,25 +359,15 @@ class FileParser(object):
                 # This happens if the file doesn't exist
                 raise InputFileError(self.filename, str(e))
         else:
+            # Fetch remote sitemap and parse it
+            url = self.filename
+            response = requests.get(url)
+            if response.status_code != 200:
+                raise InputFileError(self.filename, 'URL returned {} response'.format(response.status_code))
             try:
-                url = self.filename
-                # Python 3
-                if hasattr(urllib, 'request'):
-                    response = urllib.request.urlopen(url)
-                # Python 2
-                else:
-                    response = urllib.urlopen(url)
-                try:
-                    tree = ElementTree.parse(response)
-                except ElementTree.ParseError as e:
-                    # This happens if the XML couldn't be parsed
-                    raise URLError(self.filename, 'XML could not be parsed from URL')
-            except URLError as e:
-                # This happens if the url can't be reached
-                raise URLError(self.filename, str(e))
-
-        # Get the root element
-        root = tree.getroot()
+                root = ElementTree.fromstring(response.text)
+            except ElementTree.ParseError as e:
+                raise InputFileError(self.filename, 'Could not parse response to XML. Error: {0}'.format(str(e)))
 
         # Check whether it's a sitemap
         if root.tag == '{' + SITEMAP_NAMESPACE + '}urlset':
