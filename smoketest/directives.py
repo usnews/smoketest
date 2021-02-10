@@ -377,7 +377,7 @@ class FileParser(object):
                     tree = ElementTree.parse(response)
                 except ElementTree.ParseError as e:
                     # This happens if the XML couldn't be parsed
-                    raise URLError(self.filename, 'XML could not be parsed from URL')
+                    raise URLError(self.filename, 'XML could not be parsed from URL: ' + url)
             except URLError as e:
                 # This happens if the url can't be reached
                 raise URLError(self.filename, str(e))
