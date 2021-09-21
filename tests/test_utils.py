@@ -119,6 +119,16 @@ class TestTransformUrlBasedOnOptions(unittest.TestCase):
         transformed = transform_url_based_on_options(url, options)
         self.assertEqual(transformed, 'http://www.usnews.com/stag/')
 
+        url = 'http://www.usnews{LEVEL}.com'
+
+        options = Options(None, '-staging', None, False)
+        transformed = transform_url_based_on_options(url, options)
+        self.assertEqual(transformed, 'http://www.usnews-staging.com')
+
+        options = Options(None, '', None, False)
+        transformed = transform_url_based_on_options(url, options)
+        self.assertEqual(transformed, 'http://www.usnews.com')
+
     def test_port(self):
         from smoketest.utils import transform_url_based_on_options
         from collections import namedtuple
