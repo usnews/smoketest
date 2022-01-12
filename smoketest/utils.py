@@ -31,7 +31,7 @@ def transform_url(url, scheme=None, port=None, level=None, cachebust=None):
         parts[0] = scheme
     if port:
         parts = port_transform(parts, port)
-    if level:
+    if level is not None:
         parts = level_transform(parts, level)
     if cachebust:
         parts = cachebust_transform(parts)
