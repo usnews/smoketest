@@ -1,0 +1,105 @@
+# simple URL list, test for 200 status code
+- https://www.usnews.com
+- https://www.usnews.com/news
+
+# full directive definition, test for 200 status code
+- directive: check
+  url: https://www.usnews.com
+
+# 404 status code
+- directive: check
+  url: https://www.usnews.com/asdf
+  status: 404
+
+# apply same tests to multiple URLs
+- directive: check
+  urls:
+      - https://www.usnews.com/asdf
+      - https://www.usnews.com/qwer
+  status: 404
+
+# test redirect status and location
+- directive: check
+  url: http://www.usnews.com
+  redirect:
+      status: 301
+      location: https://www.usnews.com/
+
+# test final status code and location after following all redirects
+- directive: check
+  # this URL will redirect twice
+  url: http://health.usnews.com/best-colleges
+  follow_redirects: true
+  redirect:
+      status: 200
+      location: https://www.usnews.com/best-colleges
+
+# desktop and mobile
+- directive: check
+  url: https://www.usnews.com
+  platforms:
+      - desktop
+      - mobile
+
+# custom request timeout
+- directive: check
+  url: https://www.usnews.com
+  timeout: 15.0
+
+# only run on live (skip when --level=stag, --level=dev, etc.)
+- directive: check
+  url: https://www.usnews.com
+  only_levels:
+      - live
+
+# response headers
+- directive: check
+  url: https://www.usnews.com
+  headers:
+      -
+          header: Content-Type
+          equals: text/html;charset=UTF-8
+      -
+          header: Content-Type
+          startswith: text/html
+      -
+          header: Content-Type
+          endswith: charset=UTF-8
+      -
+          header: Content-Type
+          contains: html
+      -
+          header: Content-Type
+          regex: ^text/html.*UTF-8$
+
+# html
+- directive: check
+  url: https://www.usnews.com/best-colleges
+  html:
+      -
+          selector: h1
+          equals: "U.S. News Best Colleges"
+      -
+          selector: link[rel='canonical']
+          attribute: href
+          startswith: "https://"
+      -
+          selector: link[rel='canonical']
+          attribute: href
+          endswith: "/best-colleges"
+      -
+          selector: meta[name='keywords']
+          attribute: content
+          contains: "sectionfront"
+      -
+          selector: link[rel='canonical']
+          attribute: href
+          regex: '^https://www(-\w+)?\.usnews\.com/best-colleges$'
+
+# include another file
+- directive: include
+  filename: include_this.yaml
+
+# include URLs from a remote XML sitemap
+- directive: include
+  filename: https://cars.usnews.com/sitemap-dims-smoketest.xml

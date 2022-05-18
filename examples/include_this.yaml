@@ -1,0 +1,3 @@
+# this file is just here to be included by an other one
+- directive: check
+  url: https://www.usnews.com
