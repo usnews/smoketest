@@ -36,7 +36,7 @@ Features
 Requirements
 ============
 
-Smoketest requires Python 2.7 or 3.4 and above.
+Smoketest requires Python 3.4 or above.
 
 Installation
 ============
@@ -44,7 +44,7 @@ Installation
 You should probably install into a Python virtual environment with a supported
 Python version. To start with a fresh one, do::
 
-    virtualenv venv
+    python3 -m venv venv
     source venv/bin/activate
 
 You can install with pip, or you can clone this repository and do::
