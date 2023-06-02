@@ -372,8 +372,39 @@ class FileParser(object):
         # Check whether it's a sitemap
         if root.tag == '{' + SITEMAP_NAMESPACE + '}urlset':
             return self._generate_directives_from_xml_sitemap(root)
+        elif root.tag == '{' + SITEMAP_NAMESPACE + '}sitemapindex':
+            return self._generate_directives_from_xml_sitemap_index(root)
         else:
             raise InputFileError(self.filename, 'XML input must be a sitemap')
+
+    def _generate_directives_from_xml_sitemap_index(self, root):
+        """A minimal sitemap index looks something like:
+
+        <sitemapindex>
+            <sitemap>
+                <loc>https://www.example.com</loc>
+            </sitemap>
+        </sitemapindex>
+        """
+        directive_type = self._directive_map['check']
+        directives = []
+
+        # Generate directives
+        for loc in root.iterfind('./ns:sitemap/ns:loc', {
+            'ns': SITEMAP_NAMESPACE
+        }):
+            elem = {
+                'directive': 'check',
+                'follow_redirects': False,
+                'url': loc.text,
+            }
+
+            directive = directive_type(elem, self.options)
+            directives += directive.directives
+
+        for directive in directives:
+            yield directive
+
 
     def _generate_directives_from_xml_sitemap(self, root):
         """A minimal sitemap looks something like:
